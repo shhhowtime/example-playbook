@@ -9,6 +9,9 @@ node("ansible-docker")
         }
         sh "ansible-galaxy install -r requirements.yml -p roles"
     }
+    stage("Check ssh key"){
+        secret_check=true
+    }
     stage("Run playbook")
     {
         if (secret_check)
