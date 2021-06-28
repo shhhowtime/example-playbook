@@ -1,12 +1,13 @@
 node("ansible-docker")
 {
-    stage("Git checkout")
+    stage("Git sync")
     {
-        git credentialsId: '44de766a-8add-4112-ac39-6bb223138b79', url: 'git@github.com:aragastmatb/example-playbook.git'
-    }
-    stage("Check ssh key")
-    {
-        secret_check=true
+        git credentialsId: '44de766a-8add-4112-ac39-6bb223138b79', url: 'git@github.com:shhhowtime/example-playbook.git'
+        withCredentials([sshUserPrivateKey(credentialsId: '44de766a-8add-4112-ac39-6bb223138b79', keyFileVariable: 'GITKEY', passphraseVariable: 'GITPASS', usernameVariable: 'GITUSER')]) 
+        {
+            sh 'cp -f $GITKEY ~/.ssh/id_rsa'
+        }
+        sh "ansible-galaxy install -r requirements.yml -p roles"
     }
     stage("Run playbook")
     {
